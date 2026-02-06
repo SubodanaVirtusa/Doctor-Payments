@@ -14,6 +14,37 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+// Add CORS with specific origins
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        policy =>
+        {
+            policy.WithOrigins(
+                "https://doctor-payments-frontend-czdvambxe2h8anh8.southindia-01.azurewebsites.net/",
+                "https://www.yourdomain.com",
+                "http://localhost:3000",  // React dev server
+                "http://localhost:4200",  // Angular dev server
+                "http://localhost:8080"   // Vue dev server
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // If you need to send cookies/auth headers
+        });
+});
+
 builder.Services.AddOptions<CosmosDbOptions>()
     .Bind(builder.Configuration.GetSection(CosmosDbOptions.SectionName))
     .Validate(options => !string.IsNullOrWhiteSpace(options.ConnectionString), "CosmosDb:ConnectionString is required.")
@@ -57,6 +88,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Use CORS - IMPORTANT: Must be before UseHttpsRedirection and UseAuthorization
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
