@@ -46,7 +46,7 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddSingleton<IPaymentRepository, CosmosPaymentRepository>();
 builder.Services.AddSingleton<IPaymentService, PaymentService>();
 
-builder.Services.AddHostedService<CosmosInitializer>();
+// builder.Services.AddHostedService<CosmosInitializer>();
 builder.Services.AddHostedService<ServiceBusAppointmentListener>();
 
 var app = builder.Build();
